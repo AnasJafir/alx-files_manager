@@ -16,7 +16,6 @@ class DBClient {
     return this.mongoClient.isConnected();
   }
 
-
   getCollection(collectionName) {
     const collection = this.db.collection(collectionName);
     return collection;

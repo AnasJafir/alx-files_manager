@@ -11,7 +11,6 @@ import formatFileDocument from '../utils/format';
 const fileQueue = Queue('thumbnail generation');
 
 class FilesController {
-  
   static async postUpload(req, res) {
     const userId = req.user._id;
     let fileDocument;
@@ -23,19 +22,15 @@ class FilesController {
     }
 
     if (!fileDocument.type !== 'folder') {
-      
       FilesCollection.storeFileData(fileDocument.localPath, req.body.data);
 
-      
       const jobData = { fileId: fileDocument._id, userId };
       fileQueue.add(jobData);
     }
     res.status(201).json(formatFileDocument(fileDocument));
   }
 
-  
   static async getShow(req, res) {
-    
     const userId = req.user._id;
     const { id } = req.params;
     const _id = ObjectId.isValid(id) ? new ObjectId(id) : id;
@@ -47,19 +42,16 @@ class FilesController {
     return res.status(200).json(formattedResponse);
   }
 
- 
   static async getIndex(req, res) {
     const MAX_PAGE_SIZE = 20;
     const FilesCollection = dbClient.getCollection('files');
     const userId = req.user._id;
     const { parentId = '0', page = 0 } = req.query;
-    
+
     const _parentId = parentId && ObjectId.isValid(parentId) ? new ObjectId(parentId) : parentId;
 
-    
     const _page = /^\d+$/.test(page) ? parseInt(page, 10) : 0;
 
-    
     const pipeline = [
       { $match: { parentId: _parentId, userId } },
       { $sort: { _id: 1 } },
@@ -71,15 +63,12 @@ class FilesController {
     res.status(200).json(formattedResponse);
   }
 
-  
   static async putPublish(req, res) {
     const userId = req.user._id;
     const { id } = req.params;
 
-    
     const updateFilter = { _id: ObjectId.isValid(id) ? new ObjectId(id) : id, userId };
 
-    
     const updateOperation = { $set: { isPublic: true } };
 
     const commandResult = await FilesCollection.updateFile(updateFilter, updateOperation);
@@ -91,14 +80,12 @@ class FilesController {
     }
   }
 
-  
   static async putUnpublish(req, res) {
     const userId = req.user._id;
     const { id } = req.params;
 
-    
     const updateFilter = { _id: ObjectId.isValid(id) ? new ObjectId(id) : id, userId };
-    
+
     const updateOperation = { $set: { isPublic: false } };
 
     const commandResult = await FilesCollection.updateFile(updateFilter, updateOperation);
@@ -110,7 +97,6 @@ class FilesController {
     }
   }
 
-  
   static async getFile(req, res) {
     const IMG_SIZES = ['500', '250', '100'];
     const token = req.get('X-Token');

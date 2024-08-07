@@ -14,13 +14,11 @@ class AuthController {
     const email = credentials[0] || '';
     const password = credentials[1] || '';
 
-   
     const user = await UsersCollection.getUser({ email });
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-   
     if (!PasswordHandler.isPasswordValid(password, user.password)) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -29,7 +27,6 @@ class AuthController {
     return res.status(200).json({ token });
   }
 
-  
   static async getDisconnect(req, res) {
     const token = req.get('X-Token');
     if (!await AuthTokenHandler.getUserByToken(token)) {
@@ -40,7 +37,6 @@ class AuthController {
     res.status(204).json();
   }
 
-  
   static async getMe(req, res) {
     const { user } = req;
     if (!user) res.status(401).json({ error: 'Unauthorized' });
